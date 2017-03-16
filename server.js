@@ -13,7 +13,8 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 var alarmBrightness = 0;
-var interval;
+var timingAlarm;
+var runningAlarm;
 
 function setColor(color, brightness) {
     if (brightness !== undefined && brightness !== null && brightness <= 255) {
@@ -30,10 +31,13 @@ function setColor(color, brightness) {
 }
 
 function setAlarm(alarmtime) {
-    console.log('Alarm set for: ' + alarmtime);
-    setTimeout(function () {
-        interval = setInterval(increaseAlarmBrightness(), 100);
+    
+    if (!timingAlarm){
+    timingAlarm = setTimeout(function () {
+        runningAlarm = setInterval(increaseAlarmBrightness(), 100);
     }, alarmtime - date.getTime);
+    console.log('Alarm set for: ' + alarmtime);
+    }
 }
 
 function increaseAlarmBrightness() {
@@ -42,12 +46,23 @@ function increaseAlarmBrightness() {
             alarmBrightness++;
             setColor('93FF3F', alarmBrightness);
         } else if (alarmBrightness >= 255) {
-            clearInterval(interval);
-            alarmBrightness = 0;
+            stopAlarm();
         }
     }
 }
+
+function stopAlarm() {
+    clearTimeout(timingAlarm);
+    clearInterval(runningAlarm);
+    timingAlarm = null;
+    runningAlarm = null;
+    alarmBrightness = 0;
+}
+
 app.post('/setcolor', function (req, res) {
+    if (runningAlarm) {
+        stopAlarm();
+    }
     setColor(req.body.color, req.body.brightness);
     res.end('Set color to #' + req.body.color + ' and brightness to ' + req.body.brightness);
 });
@@ -55,6 +70,11 @@ app.post('/setcolor', function (req, res) {
 app.post('/alarm', function (req, res) {
     setAlarm(req.body.alarmtime);
     res.end('Alarm Set!');
+});
+
+app.post('/alarmstop', function (req, res) {
+    stopAlarm();
+    res.end('Alarm Disabled!');
 });
 
 //Setup a default catch-all route that sends back a welcome message in JSON format.
