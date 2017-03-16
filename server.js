@@ -13,6 +13,7 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 var alarmBrightness = 0;
+var interval;
 
 function setColor(color, brightness) {
     if (brightness !== undefined && brightness !== null && brightness <= 255) {
@@ -31,20 +32,20 @@ function setColor(color, brightness) {
 function setAlarm(alarmtime) {
     console.log('Alarm set for: ' + alarmtime);
     setTimeout(function () {
-        var interval = setInterval(increaseBrightness(), 3500);
+        interval = setInterval(increaseAlarmBrightness(), 100);
     }, alarmtime - date.getTime);
 }
 
-function increaseBrightness() {
+function increaseAlarmBrightness() {
     return function () {
         if (alarmBrightness < 255) {
             alarmBrightness++;
-            setColor('93ff3F', alarmBrightness);
+            setColor('93FF3F', alarmBrightness);
         } else if (alarmBrightness >= 255) {
             clearInterval(interval);
             alarmBrightness = 0;
         }
-    };
+    }
 }
 app.post('/setcolor', function (req, res) {
     setColor(req.body.color, req.body.brightness);
