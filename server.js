@@ -31,11 +31,10 @@ function setColor(color, brightness) {
 }
 
 function setAlarm(alarmtime) {
-    
     if (!timingAlarm){
     timingAlarm = setTimeout(function () {
         runningAlarm = setInterval(increaseAlarmBrightness(), 3500);
-    }, ((alarmtime - date.getTime)) - 900*1000);
+    }, ((alarmtime - date.getTime())) - 900*1000);
     console.log('Alarm set for: ' + alarmtime);
     }
 }
