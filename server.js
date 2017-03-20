@@ -34,8 +34,8 @@ function setAlarm(alarmtime) {
     
     if (!timingAlarm){
     timingAlarm = setTimeout(function () {
-        runningAlarm = setInterval(increaseAlarmBrightness(), 100);
-    }, alarmtime - date.getTime);
+        runningAlarm = setInterval(increaseAlarmBrightness(), 3500);
+    }, ((alarmtime - date.getTime)) - 900*1000);
     console.log('Alarm set for: ' + alarmtime);
     }
 }
